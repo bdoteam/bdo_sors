@@ -25,14 +25,10 @@ import Highlighter from "react-highlight-words";
 import { connect } from "react-redux";
 import client_type from "../../components/ClientType";
 import SearchSVG from "../../components/svg/SearchSVG";
-
-import GridContainer from "../../components/material-dashboard-pro-react/Grid/GridContainer.jsx";
-import GridItem from "../../components/material-dashboard-pro-react/Grid/GridItem.jsx";
-import Card from "../../components/material-dashboard-pro-react/Card/Card.jsx";
-import CardHeader from "../../components/material-dashboard-pro-react/Card/CardHeader.jsx";
-import CardIcon from "../../components/material-dashboard-pro-react/Card/CardIcon.jsx";
-import CardBody from "../../components/material-dashboard-pro-react/Card/CardBody.jsx";
 import NumberFormat from "react-number-format";
+import localize from "../../components/Localization/index";
+import localizeLang from "../../components/Localization/lang";
+
 const SearchIcon = props => <Icon component={SearchSVG} {...props} />;
 const Option = Select.Option;
 const ButtonGroup = Button.Group;
@@ -44,7 +40,17 @@ const digestName = (digest, id) => {
   }
   return result;
 };
-
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 class ClientView extends Component {
   constructor(props) {
     super(props);
@@ -77,20 +83,20 @@ class ClientView extends Component {
         )
       },
       {
-        title: "Наименование",
+        title: localName("Наименование"),
         dataIndex: "name",
         key: "name",
         ...this.getColumnSearchProps("name")
       },
       {
-        title: "Тип клиента",
+        title: localName("Тип клиента"),
         dataIndex: "type",
         key: "type",
         editable: true,
         render: (text, record) => digestName(client_type, text)
       },
       {
-        title: "Дата создания",
+        title: localName("Дата создания"),
         dataIndex: "created",
         key: "created",
         render: text => (
@@ -98,13 +104,13 @@ class ClientView extends Component {
         )
       },
       {
-        title: "Кем создан",
+        title: localName("Кем создан"),
         dataIndex: "created_by",
         key: "created_by",
         ...this.getColumnSearchProps("created_by")
       },
       {
-        title: "Дата обновления",
+        title: localName("Дата обновления"),
         dataIndex: "updated",
         key: "updated",
         render: text => (
@@ -114,18 +120,18 @@ class ClientView extends Component {
         )
       },
       {
-        title: "Кем обновлен",
+        title: localName("Кем обновлен"),
         dataIndex: "updated_by",
         key: "updated_by"
       },
       {
-        title: "БИН",
+        title: localName("БИН"),
         dataIndex: "bin",
         key: "bin",
         ...this.getColumnSearchProps("bin")
       },
       {
-        title: "Контактный телефон",
+        title: localName("Контактный телефон"),
         dataIndex: "con_phone",
         key: "con_phone",
         editable: false,
@@ -141,28 +147,28 @@ class ClientView extends Component {
         )
       },
       {
-        title: "Статус",
+        title: localName("Статус"),
         dataIndex: "status",
         key: "status",
         render: (text, record) => (
           <span>
             <Tag
-              color={record.status == "Активный" ? "green" : "volcano"}
+              color={record.status == "Active" ? "green" : "volcano"}
               key={record.id}
             >
-              {record.status}
+              {record.status_val}
             </Tag>
           </span>
         )
       },
       {
-        title: "Действия",
+        title: localName("Действия"),
         dataIndex: "operation",
         render: (text, record) =>
           this.state.data_res.length >= 1 ? (
             <div>
               <ButtonGroup>
-                <Tooltip placement="bottomLeft" title="Изменить">
+                <Tooltip placement="bottomLeft" title={localName("Изменить")}>
                   <Button
                     disabled={this.props.client === "read_m" ? true : false}
                     shape="circle"
@@ -173,22 +179,22 @@ class ClientView extends Component {
                 </Tooltip>
                 <Modal
                   style={{ height: 100 }}
-                  title="Изменить Клиента"
+                  title={localName("Изменить Клиента")}
                   visible={this.state.chModal}
                   onOk={() => this.handleUpdate(this.state.update_data[0])}
                   onCancel={this.changeHide}
-                  okText="Изменить"
-                  cancelText="Отменить"
+                  okText={localName("Сохранить")}
+                  cancelText={localName("Отменить")}
                 >
                   <Form layout="vertical" hideRequiredMark>
                     <Row gutter={1}>
                       <Col span={12}>
-                        <Form.Item label="Наименование клиента">
+                        <Form.Item label={localName("Наименование клиента")}>
                           {
                             <Input
                               type="text"
                               allowClear={true}
-                              placeholder="Наименование клиента"
+                              placeholder={localName("Наименование клиента")}
                               defaultValue={this.state.update_data[0].name}
                               value={this.state.update_data[0].name}
                               onChange={evt =>
@@ -201,10 +207,10 @@ class ClientView extends Component {
                             />
                           }
                         </Form.Item>
-                        <Form.Item label="БИН">
+                        <Form.Item label={localName("БИН")}>
                           {
                             <Input
-                              placeholder="БИН"
+                              placeholder={localName("БИН")}
                               allowClear={true}
                               defaultValue={this.state.update_data[0].bin}
                               value={this.state.update_data[0].bin}
@@ -218,11 +224,15 @@ class ClientView extends Component {
                             />
                           }
                         </Form.Item>
-                        <Form.Item label="Статус">
+                        <Form.Item label={localName("Статус")}>
                           {
                             <Select
-                              defaultValue={this.state.update_data[0].status}
-                              value={this.state.update_data[0].status}
+                              defaultValue={localName(
+                                this.state.update_data[0].status
+                              )}
+                              value={localName(
+                                this.state.update_data[0].status
+                              )}
                               onChange={value =>
                                 this.handleChange(
                                   value,
@@ -231,18 +241,22 @@ class ClientView extends Component {
                                 )
                               }
                             >
-                              <Option value="Активный">Активный</Option>
-                              <Option value="Отключен">Отключен</Option>
+                              <Option value="Active">
+                                {localName("Активный")}
+                              </Option>
+                              <Option value="Disabled">
+                                {localName("Отключен")}
+                              </Option>
                             </Select>
                           }
                         </Form.Item>
                         {this.props.user_group === "Manager" ? (
-                          <Form.Item label="Описание">
+                          <Form.Item label={localName("Описание")}>
                             {
                               <Input.TextArea
                                 rows={2}
                                 allowClear={true}
-                                placeholder="Описание"
+                                placeholder={localName("Описание")}
                                 defaultValue={
                                   this.state.update_data[0].description
                                 }
@@ -260,8 +274,13 @@ class ClientView extends Component {
                         ) : null}
                       </Col>
 
-                      <Col span={12}>
-                        <Form.Item label="Тип клиента">
+                      <Col
+                        span={12}
+                        style={{
+                          paddingLeft: "10px"
+                        }}
+                      >
+                        <Form.Item label={localName("Тип клиента")}>
                           {
                             <Select
                               defaultValue={this.state.update_data[0].type}
@@ -282,12 +301,12 @@ class ClientView extends Component {
                             </Select>
                           }
                         </Form.Item>
-                        <Form.Item label="Контактный телефон">
+                        <Form.Item label={localName("Контактный телефон")}>
                           {
                             <PhoneInput
                               class="ant-input"
                               country="KZ"
-                              placeholder="Контактный телефон"
+                              placeholder={localName("Контактный телефон")}
                               allowClear={true}
                               defaultValue={this.state.update_data[0].con_phone}
                               value={this.state.update_data[0].con_phone}
@@ -308,12 +327,15 @@ class ClientView extends Component {
                 {this.props.user_group === "Admin" ? (
                   <Popconfirm
                     placement="topLeft"
-                    title="Удалить клиента?"
+                    title={localName("Удалить клиента?")}
                     onConfirm={() => this.handleDelete(record)}
-                    okText="Да"
-                    cancelText="Нет"
+                    okText={localName("Да")}
+                    cancelText={localName("Нет")}
                   >
-                    <Tooltip placement="bottomLeft" title="Удалить">
+                    <Tooltip
+                      placement="bottomLeft"
+                      title={localName("Удалить")}
+                    >
                       <Button type="danger" shape="circle">
                         <Icon type="delete" />
                       </Button>
@@ -431,7 +453,7 @@ class ClientView extends Component {
       bin = evt.target.value;
     }
     if (field === "status") {
-      status = evt.target.value;
+      status = evt;
     }
     if (field === "con_phone") {
       con_phone = evt;
@@ -469,14 +491,14 @@ class ClientView extends Component {
         this.setState({ loading: false });
         if (res.data.detailed_message !== "") {
           res.data.error_code == 0
-            ? message.success(res.data.detailed_message)
-            : message.error(res.data.detailed_message);
+            ? message.success(localName(res.data.detailed_message))
+            : message.error(localName(res.data.detailed_message));
         }
       })
       .catch(res => {
         this.setState({ loading: false });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   };
@@ -505,14 +527,14 @@ class ClientView extends Component {
         this.setState({ loading: false, chModal: false });
         if (res.data.detailed_message !== "") {
           res.data.error_code == 0
-            ? message.success(res.data.detailed_message)
-            : message.error(res.data.detailed_message);
+            ? message.success(localName(res.data.detailed_message))
+            : message.error(localName(res.data.detailed_message));
         }
       })
       .catch(res => {
         this.setState({ loading: false });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
     this.setState({
@@ -557,7 +579,7 @@ class ClientView extends Component {
       .catch(res => {
         this.setState({ loading: false });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   };

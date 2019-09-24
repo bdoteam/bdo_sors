@@ -66,7 +66,7 @@ class NewTimesheet extends React.Component {
   componentDidMount() {
     this.setState({ loading: true });
     axios
-      .get(sessionStorage.getItem("b_url") + "customer?status=Активный", {
+      .get(sessionStorage.getItem("b_url") + "customer?status=Active", {
         headers: {
           Authorization: "Bearer " + sessionStorage.getItem("credentials")
         }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Tag, message, Tooltip, Badge } from "antd";
+import { Badge } from "antd";
 
 class TodoNotice extends Component {
   constructor(props) {

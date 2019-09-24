@@ -23,6 +23,7 @@ import SearchSVG from "../../../../components/svg/SearchSVG";
 import ColorPicker from "rc-color-picker";
 import { SwatchesPicker } from "react-color";
 import "rc-color-picker/assets/index.css";
+import localizeLang from "../../../../components/Localization/lang";
 
 const Option = Select.Option;
 const SearchIcon = props => <Icon component={SearchSVG} {...props} />;
@@ -36,6 +37,7 @@ class List_of_val extends Component {
       data_res: [],
       parent_val_list: [],
       parent_id: null,
+      lang: "",
       color: null,
       update_data: [
         {
@@ -85,6 +87,11 @@ class List_of_val extends Component {
         dataIndex: "parent_val",
         key: "parent_val",
         ...this.getColumnSearchProps("parent_val")
+      },
+      {
+        title: "Язык",
+        dataIndex: "lang_val",
+        key: "lang_val"
       },
       {
         title: "Дата создания",
@@ -153,7 +160,7 @@ class List_of_val extends Component {
                 >
                   <Form layout="vertical" hideRequiredMark>
                     <Row gutter={1}>
-                      <Col span={24}>
+                      <Col span={12}>
                         <Form.Item label="Тип">
                           {
                             <Input
@@ -172,7 +179,48 @@ class List_of_val extends Component {
                             />
                           }
                         </Form.Item>
+                        <Form.Item label="Код">
+                          {
+                            <Input
+                              type="text"
+                              allowClear={true}
+                              placeholder="Код"
+                              defaultValue={this.state.update_data[0].code}
+                              value={this.state.update_data[0].code}
+                              onChange={evt =>
+                                this.handleChange(
+                                  evt,
+                                  this.state.update_data[0],
+                                  "code"
+                                )
+                              }
+                            />
+                          }
+                        </Form.Item>
+                        <Form.Item label="Язык">
+                          <Select
+                            allowClear={true}
+                            defaultValue={this.state.lang}
+                            value={this.state.lang}
+                            onChange={val => this.setState({ lang: val })}
+                          >
+                            {localizeLang.map(gr =>
+                              gr.lang === sessionStorage.getItem("lang") ? (
+                                <Option key={gr.val} value={gr.val}>
+                                  {gr.name}
+                                </Option>
+                              ) : null
+                            )}
+                          </Select>
+                        </Form.Item>
+                      </Col>
 
+                      <Col
+                        span={12}
+                        style={{
+                          paddingLeft: "10px"
+                        }}
+                      >
                         <Form.Item label="Значение">
                           {
                             <Input
@@ -205,30 +253,6 @@ class List_of_val extends Component {
                             ))}
                           </Select>
                         </Form.Item>
-                        <Form.Item label="Код">
-                          {
-                            <Input
-                              type="text"
-                              allowClear={true}
-                              placeholder="Код"
-                              defaultValue={this.state.update_data[0].code}
-                              value={this.state.update_data[0].code}
-                              onChange={this.colorPick}
-                            />
-                          }
-                        </Form.Item>
-                        <Form.Item label="Цвет">
-                          {
-                            <SwatchesPicker
-                              color={
-                                this.state.color === null
-                                  ? "gray"
-                                  : this.state.color
-                              }
-                              onChangeComplete={this.colorPick}
-                            />
-                          }
-                        </Form.Item>
                         <Form.Item label="Активный">
                           {
                             <Checkbox
@@ -244,6 +268,20 @@ class List_of_val extends Component {
                           }
                         </Form.Item>
                       </Col>
+                    </Row>
+                    <Row gutter={1}>
+                      <Form.Item label="Цвет">
+                        {
+                          <SwatchesPicker
+                            color={
+                              this.state.color === null
+                                ? "gray"
+                                : this.state.color
+                            }
+                            onChangeComplete={this.colorPick}
+                          />
+                        }
+                      </Form.Item>
                     </Row>
                   </Form>
                 </Modal>
@@ -412,7 +450,8 @@ class List_of_val extends Component {
       active: updRecord.active,
       color: this.state.color,
       parent_id:
-        this.state.parent_id === undefined ? null : this.state.parent_id
+        this.state.parent_id === undefined ? null : this.state.parent_id,
+      lang: this.state.lang
     };
     axios({
       method: "post",
@@ -449,6 +488,7 @@ class List_of_val extends Component {
     this.setState({
       chModal: true,
       parent_id: record.parent_id,
+      lang: record.lang,
       update_data: data,
       color: record.color
     });

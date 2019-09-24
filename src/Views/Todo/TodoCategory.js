@@ -4,7 +4,18 @@ import Actions_loader from "../LoaderActions";
 import Todo_Comment from "./TodoComments";
 import { connect } from "react-redux";
 import axios from "axios";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const TabPane = Tabs.TabPane;
 
 class TodoSlidingTabs extends Component {
@@ -78,7 +89,7 @@ class TodoSlidingTabs extends Component {
                   offset="50,0"
                   count={this.state.doc_count}
                 >
-                  Документы
+                  {localName("Документы")}
                 </Badge>
               }
               key="1"
@@ -94,7 +105,7 @@ class TodoSlidingTabs extends Component {
                   offset="50,0"
                   count={this.state.comm_count}
                 >
-                  Комментарии
+                  {localName("Комментарии")}
                 </Badge>
               }
               key="2"

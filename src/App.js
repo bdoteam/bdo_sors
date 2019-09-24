@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import MainPage from "./Views/Main Page/index";
 import LoginPage from "./Views/LoginPage";
+import NewLoginPage from "./Views/LoginPage/NewLoginPage.js";
 import { Route, BrowserRouter, Switch, Redirect } from "react-router-dom";
 
 class ClientDetailComp extends React.Component {
@@ -50,7 +51,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route path="/Login" component={LoginPage} />
+          <Route path="/Login" component={NewLoginPage} />
           <Route
             path="/Client"
             component={() => ProtectedComponent(this.router("Client"))}
@@ -76,7 +77,7 @@ class App extends Component {
             component={ClientDetailComp}
           />
           <ProtectedRoute path="/TodoDetail/:id" component={TodoDetailComp} />
-          <Route path="*" exact component={LoginPage} />
+          <Route path="*" exact component={NewLoginPage} />
         </Switch>
       </BrowserRouter>
     );

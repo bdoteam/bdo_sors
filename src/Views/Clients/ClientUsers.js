@@ -4,7 +4,18 @@ import axios from "axios";
 import "antd/dist/antd.css";
 import moment from "moment";
 import { connect } from "react-redux";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 class ClientUsers extends Component {
   constructor(props) {
     super(props);
@@ -24,17 +35,17 @@ class ClientUsers extends Component {
         sortOrder: true
       },
       {
-        title: "Логин",
+        title: localName("Логин"),
         dataIndex: "login",
         key: "login"
       },
       {
-        title: "Почта",
+        title: localName("Почта"),
         dataIndex: "email",
         key: "email"
       },
       {
-        title: "Должность",
+        title: localName("Должность"),
         dataIndex: "position",
         key: "position",
         render: (text, record) => (
@@ -44,7 +55,7 @@ class ClientUsers extends Component {
         )
       },
       {
-        title: "Группа пользователя",
+        title: localName("Группа пользователя"),
         dataIndex: "group_name",
         key: "group_name",
         render: (text, record) => (
@@ -65,7 +76,7 @@ class ClientUsers extends Component {
         )
       },
       {
-        title: "Дата создания",
+        title: localName("Дата создания"),
         dataIndex: "created",
         key: "created",
         render: text => (
@@ -73,7 +84,7 @@ class ClientUsers extends Component {
         )
       },
       {
-        title: "Дата обновления",
+        title: localName("Дата обновления"),
         dataIndex: "updated",
         key: "updated",
         render: text => (
@@ -83,12 +94,12 @@ class ClientUsers extends Component {
         )
       },
       {
-        title: "Кто создал",
+        title: localName("Кем создан"),
         dataIndex: "created_by",
         key: "created_by"
       },
       {
-        title: "Кем обновлен",
+        title: localName("Кем обновлен"),
         dataIndex: "updated_by",
         key: "updated_by"
       }

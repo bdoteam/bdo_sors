@@ -16,7 +16,18 @@ import axios from "axios";
 import ClientCategory from "./ClientCategory";
 import { connect } from "react-redux";
 import client_type from "../../components/ClientType";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const Option = Select.Option;
 const ButtonGroup = Button.Group;
 //функция для работы со справочниками вытаскиваем название по id
@@ -76,7 +87,7 @@ class ClientDetailForm extends React.Component {
             <Link to="/Client">
               <Button type="primary">
                 <Icon type="left-circle" theme="twoTone" />
-                Назад
+                {localName("Назад")}
               </Button>
             </Link>
 
@@ -87,11 +98,11 @@ class ClientDetailForm extends React.Component {
           <ButtonGroup>
             <p style={{ marginLeft: 20 }}>
               <h4>
-                Статус:
+                {localName("Статус")}:
                 <Tag
                   style={{ marginLeft: 5 }}
                   color={
-                    this.state.data_detail[0].status == "Активный"
+                    this.state.data_detail[0].status == localName("Активный")
                       ? "green"
                       : "volcano"
                   }
@@ -108,11 +119,11 @@ class ClientDetailForm extends React.Component {
           <Form layout="vertical" hideRequiredMark>
             <Row gutter={16}>
               <Col span={6}>
-                <Form.Item label="Наименование клиента">
+                <Form.Item label={localName("Наименование клиента")}>
                   {
                     <Input
                       type="text"
-                      placeholder="Наименование клиента"
+                      placeholder={localName("Наименование клиента")}
                       defaultValue={this.state.data_detail[0].name}
                       value={this.state.data_detail[0].name}
                     />
@@ -120,11 +131,11 @@ class ClientDetailForm extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={3}>
-                <Form.Item label="БИН">
+                <Form.Item label={localName("БИН")}>
                   {
                     <Input
                       readOnly
-                      placeholder="Введите БИН"
+                      placeholder={localName("Введите БИН")}
                       defaultValue={this.state.data_detail[0].bin}
                       value={this.state.data_detail[0].bin}
                     />
@@ -134,10 +145,10 @@ class ClientDetailForm extends React.Component {
             </Row>
             <Row gutter={16}>
               <Col span={6}>
-                <Form.Item label="Тип клиента">
+                <Form.Item label={localName("Тип клиента")}>
                   {
                     <Input
-                      placeholder="Тип клиента"
+                      placeholder={localName("Тип клиента")}
                       defaultValue={digestName(
                         client_type,
                         this.state.data_detail[0].type
@@ -151,12 +162,12 @@ class ClientDetailForm extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={3}>
-                <Form.Item label="Контактный телефон">
+                <Form.Item label={localName("Контактный телефон")}>
                   {
                     <PhoneInput
                       className="ant-input"
                       country="KZ"
-                      placeholder="Контактный телефон"
+                      placeholder={localName("Контактный телефон")}
                       defaultValue={this.state.data_detail[0].con_phone}
                       value={this.state.data_detail[0].con_phone}
                     />
@@ -167,11 +178,11 @@ class ClientDetailForm extends React.Component {
             {this.props.user_group === "Manager" ? (
               <Row gutter={10}>
                 <Col span={9}>
-                  <Form.Item label="Описание">
+                  <Form.Item label={localName("Описание")}>
                     <Input.TextArea
                       rows={2}
                       allowClear={true}
-                      placeholder="Описание"
+                      placeholder={localName("Описание")}
                       defaultValue={this.state.data_detail[0].description}
                       value={this.state.data_detail[0].description}
                     />

@@ -9,8 +9,19 @@ import view_name from "../../components/ViewDigest";
 import axios from "axios";
 import view_comp from "../../components/Access/ViewComp";
 import UserProfile from "../UserProfile";
-
+import localize from "../../components/Localization/index";
 import Card from "../../components/material-dashboard-pro-react/Card/Card.jsx";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 
 const { Header, Sider } = Layout;
 
@@ -164,7 +175,7 @@ class MainPage extends Component {
             <Row>
               <Col span={1} />
               <Col span={5}>
-                <h1>{this.digestName(view_name, page)}</h1>
+                <h1>{localName(this.digestName(view_name, page))}</h1>
               </Col>
               <Col span={14} />
               <Col

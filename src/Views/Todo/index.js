@@ -26,7 +26,18 @@ import Highlighter from "react-highlight-words";
 import SearchSVG from "../../components/svg/SearchSVG";
 import { connect } from "react-redux";
 import TodoNotice from "./TodoNotice";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const Option = Select.Option;
 const ButtonGroup = Button.Group;
 const SearchIcon = props => <Icon component={SearchSVG} {...props} />;
@@ -65,10 +76,10 @@ class Todo extends Component {
         key: "id",
         ...this.getColumnSearchProps("id"),
         render: (text, record) =>
-          record.status != "Завершено" ? (
+          record.status != localName("Завершено") ? (
             <TodoNotice record_id={record.id} />
           ) : (
-            <Tag className="ant-tooltip-inner">{record.id}</Tag>
+            <Tag className="ant-tooltip-inner"> {record.id} </Tag>
           )
       },
       {
@@ -77,7 +88,7 @@ class Todo extends Component {
         key: "visible",
         render: (text, record) =>
           record.user_group === "Manager" || record.user_group === "Admin" ? (
-            <Tooltip placement="top" title={"Внутренняя задача"}>
+            <Tooltip placement="top" title={localName("Внутренняя задача")}>
               <Checkbox checked={text} />
             </Tooltip>
           ) : (
@@ -85,16 +96,16 @@ class Todo extends Component {
           )
       },
       {
-        title: "Наименование",
+        title: localName("Наименование"),
         dataIndex: "shortname",
         key: "shortname",
         editable: true,
         render: (text, record) => (
-          <Link to={"/TodoDetail/" + record.id}>{text}</Link>
+          <Link to={"/TodoDetail/" + record.id}> {text} </Link>
         )
       },
       {
-        title: "Тип задачи",
+        title: localName("Тип задачи"),
         dataIndex: "type_val",
         key: "type_val",
         editable: true,
@@ -109,7 +120,7 @@ class Todo extends Component {
           )
       },
       {
-        title: "Подтип задачи",
+        title: localName("Подтип задачи"),
         dataIndex: "subtype_val",
         key: "subtype_val",
         editable: true,
@@ -125,21 +136,21 @@ class Todo extends Component {
           )
       },
       {
-        title: "Приоритет",
+        title: localName("Приоритет"),
         dataIndex: "priority",
         key: "priority",
         editable: true
       },
       {
-        title: "Дата создания",
+        title: localName("Дата создания"),
         dataIndex: "created",
         key: "created",
         render: text => (
-          <span> {moment(text).format("DD.MM.YYYY HH:mm:ss")}</span>
+          <span> {moment(text).format("DD.MM.YYYY HH:mm:ss")} </span>
         )
       },
       {
-        title: "Дата обновления",
+        title: localName("Дата обновления"),
         dataIndex: "updated",
         key: "updated",
         render: text => (
@@ -149,7 +160,7 @@ class Todo extends Component {
         )
       },
       {
-        title: "Дата принятия в работу",
+        title: localName("Дата принятия в работу"),
         dataIndex: "to_work_date",
         key: "to_work_date",
         render: text => (
@@ -159,7 +170,7 @@ class Todo extends Component {
         )
       },
       {
-        title: "Дата завершения",
+        title: localName("Дата завершения"),
         dataIndex: "end_date",
         key: "end_date",
         render: text => (
@@ -169,47 +180,47 @@ class Todo extends Component {
         )
       },
       {
-        title: "Кто создал",
+        title: localName("Кем создан"),
         dataIndex: "created_by",
         key: "created_by"
       },
       {
-        title: "Ответственный",
+        title: localName("Ответственный"),
         dataIndex: "resp",
         key: "resp",
         ...this.getColumnSearchProps("resp")
       },
       {
-        title: "Клиент",
+        title: localName("Клиент"),
         dataIndex: "customer_name",
         key: "customer_name",
         ...this.getColumnSearchProps("customer_name"),
         render: (text, record) => (
-          <Link to={"/ClientDetail/" + record.customer_id}>{text}</Link>
+          <Link to={"/ClientDetail/" + record.customer_id}> {text} </Link>
         )
       },
       {
-        title: "Статус",
+        title: localName("Статус"),
         dataIndex: "status",
         key: "status",
         ...this.getColumnSearchProps("status"),
         render: (text, record) => (
           <Tag
             color={
-              record.status == "Новый"
+              record.status == "New"
                 ? "#595959"
-                : record.status == "Завершено"
+                : record.status == "Done"
                 ? "#52c41a"
                 : "#faad14"
             }
             key={record.id}
           >
-            {record.status}
+            {record.status_val}
           </Tag>
         )
       },
       {
-        title: "Действия",
+        title: localName("Действия"),
         dataIndex: "operation",
         render: (text, record) =>
           this.state.data_res.length >= 1 ? (
@@ -223,22 +234,22 @@ class Todo extends Component {
                   <Icon type="edit" theme="twoTone" />
                 </Button>
                 <Modal
-                  title="Изменить задачу"
+                  title={localName("Изменить задачу")}
                   visible={this.state.chModal}
                   onOk={() => this.handleUpdate(this.state.update_data[0])}
                   onCancel={this.changeHide}
-                  okText="Изменить"
-                  cancelText="Отменить"
+                  okText={localName("Сохранить")}
+                  cancelText={localName("Отменить")}
                 >
                   <Form layout="vertical" hideRequiredMark>
                     <Row gutter={1}>
                       <Col span={24}>
-                        <Form.Item label="Наименование задачи">
+                        <Form.Item label={localName("Наименование задачи")}>
                           {
                             <Input
                               type="text"
                               allowClear={true}
-                              placeholder="Наименование"
+                              placeholder={localName("Наименование")}
                               defaultValue={this.state.update_data[0].shortname}
                               value={this.state.update_data[0].shortname}
                               onChange={evt =>
@@ -251,13 +262,16 @@ class Todo extends Component {
                             />
                           }
                         </Form.Item>
-
-                        <Form.Item label="Тип задачи">
+                        <Form.Item label={localName("Тип задачи")}>
                           {
                             <Select
                               defaultValue={this.state.type}
                               value={this.state.type}
-                              onChange={val => this.setState({ type: val })}
+                              onChange={val =>
+                                this.setState({
+                                  type: val
+                                })
+                              }
                             >
                               {this.state.todo_type_list.map(gr => (
                                 <Option key={gr.code} value={gr.code}>
@@ -267,12 +281,16 @@ class Todo extends Component {
                             </Select>
                           }
                         </Form.Item>
-                        <Form.Item label="Подтип задачи">
+                        <Form.Item label={localName("Подтип задачи")}>
                           {
                             <Select
                               defaultValue={this.state.subtype}
                               value={this.state.subtype}
-                              onChange={val => this.setState({ subtype: val })}
+                              onChange={val =>
+                                this.setState({
+                                  subtype: val
+                                })
+                              }
                             >
                               {this.state.todo_subtype_list.map(gr =>
                                 this.state.type === gr.parent_code ? (
@@ -284,11 +302,10 @@ class Todo extends Component {
                             </Select>
                           }
                         </Form.Item>
-
-                        <Form.Item label="Приоритет">
+                        <Form.Item label={localName("Приоритет")}>
                           {
                             <Input
-                              placeholder="Приоритет"
+                              placeholder={localName("Приоритет")}
                               allowClear={true}
                               defaultValue={this.state.update_data[0].priority}
                               value={this.state.update_data[0].priority}
@@ -309,10 +326,10 @@ class Todo extends Component {
                 {this.props.user_group === "Admin" ? (
                   <Popconfirm
                     placement="topLeft"
-                    title="Удалить задачу?"
+                    title={localName("Удалить задачу?")}
                     onConfirm={() => this.handleDelete(record)}
-                    okText="Да"
-                    cancelText="Нет"
+                    okText={localName("Да")}
+                    cancelText={localName("Нет")}
                   >
                     <Button
                       disabled={this.props.action === "read_m" ? true : false}
@@ -336,7 +353,11 @@ class Todo extends Component {
       confirm,
       clearFilters
     }) => (
-      <div style={{ padding: 8 }}>
+      <div
+        style={{
+          padding: 8
+        }}
+      >
         <Input
           ref={node => {
             this.searchInput = node;
@@ -349,23 +370,32 @@ class Todo extends Component {
           onPressEnter={() =>
             this.handleSearch(dataIndex, selectedKeys, confirm)
           }
-          style={{ width: 188, marginBottom: 8, display: "block" }}
+          style={{
+            width: 188,
+            marginBottom: 8,
+            display: "block"
+          }}
         />
         <Button
           type="primary"
           onClick={() => this.handleSearch(dataIndex, selectedKeys, confirm)}
           icon="search"
           size="small"
-          style={{ width: 90, marginRight: 8 }}
+          style={{
+            width: 90,
+            marginRight: 8
+          }}
         >
-          Поиск
+          {localName("Поиск")}
         </Button>
         <Button
           onClick={() => this.handleReset(clearFilters)}
           size="small"
-          style={{ width: 90 }}
+          style={{
+            width: 90
+          }}
         >
-          Сброс
+          {localName("Сброс")}
         </Button>
       </div>
     ),
@@ -390,7 +420,10 @@ class Todo extends Component {
           <Link to={`/TodotDetail/${record.id}`} innerRef={this.refCallback}>
             {
               <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                highlightStyle={{
+                  backgroundColor: "#ffc069",
+                  padding: 0
+                }}
                 searchWords={[this.state.searchText]}
                 autoEscape
                 textToHighlight={text}
@@ -400,7 +433,10 @@ class Todo extends Component {
         </nav>
       ) : (
         <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0
+          }}
           searchWords={[this.state.searchText]}
           autoEscape
           textToHighlight={text}
@@ -410,13 +446,17 @@ class Todo extends Component {
 
   handleSearch = (dataIndex, selectedKeys, confirm) => {
     confirm();
-    this.setState({ searchText: selectedKeys[0] });
+    this.setState({
+      searchText: selectedKeys[0]
+    });
     this.refresh(dataIndex + "=" + selectedKeys[0]);
   };
 
   handleReset = clearFilters => {
     clearFilters();
-    this.setState({ searchText: "" });
+    this.setState({
+      searchText: ""
+    });
     this.refresh();
   };
 
@@ -449,7 +489,9 @@ class Todo extends Component {
   }
   handleDelete = record => {
     //message.info("Clicked on Yes.");
-    this.setState({ loading: true });
+    this.setState({
+      loading: true
+    });
     axios
       .delete(sessionStorage.getItem("b_url") + "actions?id=" + record.id, {
         headers: {
@@ -458,22 +500,28 @@ class Todo extends Component {
       })
       .then(res => {
         this.refresh();
-        this.setState({ loading: false });
+        this.setState({
+          loading: false
+        });
         if (res.data.detailed_message !== "") {
           res.data.error_code == 0
-            ? message.success(res.data.detailed_message)
-            : message.error(res.data.detailed_message);
+            ? message.success(localName(res.data.detailed_message))
+            : message.error(localName(res.data.detailed_message));
         }
       })
       .catch(res => {
-        this.setState({ loading: false });
+        this.setState({
+          loading: false
+        });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   };
   handleUpdate = updRecord => {
-    this.setState({ loading: true });
+    this.setState({
+      loading: true
+    });
 
     let headersConfig = {
       Authorization: "Bearer " + sessionStorage.getItem("credentials")
@@ -493,17 +541,22 @@ class Todo extends Component {
     })
       .then(res => {
         this.componentDidMount();
-        this.setState({ loading: false, chModal: false });
+        this.setState({
+          loading: false,
+          chModal: false
+        });
         if (res.data.detailed_message !== "") {
           res.data.error_code == 0
-            ? message.success(res.data.detailed_message)
-            : message.error(res.data.detailed_message);
+            ? message.success(localName(res.data.detailed_message))
+            : message.error(localName(res.data.detailed_message));
         }
       })
       .catch(res => {
-        this.setState({ loading: false });
+        this.setState({
+          loading: false
+        });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   };
@@ -530,7 +583,9 @@ class Todo extends Component {
   };
 
   refresh = filter => {
-    this.setState({ loading: true });
+    this.setState({
+      loading: true
+    });
     try {
       var ParentId =
         this.props.ParentId == undefined
@@ -558,8 +613,12 @@ class Todo extends Component {
         }
       })
       .then(res => {
-        this.setState({ data_res: res.data });
-        this.setState({ loading: false });
+        this.setState({
+          data_res: res.data
+        });
+        this.setState({
+          loading: false
+        });
         //Загрузка справочников
         axios
           .get(
@@ -572,7 +631,9 @@ class Todo extends Component {
             }
           )
           .then(res => {
-            this.setState({ todo_type_list: res.data });
+            this.setState({
+              todo_type_list: res.data
+            });
             axios
               .get(
                 sessionStorage.getItem("b_url") +
@@ -585,16 +646,20 @@ class Todo extends Component {
                 }
               )
               .then(res => {
-                this.setState({ todo_subtype_list: res.data });
+                this.setState({
+                  todo_subtype_list: res.data
+                });
               })
               .catch(res => {});
           })
           .catch(res => {});
       })
       .catch(res => {
-        this.setState({ loading: false });
+        this.setState({
+          loading: false
+        });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   };
@@ -634,7 +699,11 @@ class Todo extends Component {
           }}
         />
         <BackTop />
-        <strong style={{ color: "rgba(64, 64, 64, 0.6)" }} />
+        <strong
+          style={{
+            color: "rgba(64, 64, 64, 0.6)"
+          }}
+        />
       </div>
     );
   }

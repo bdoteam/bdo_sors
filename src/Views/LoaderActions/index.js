@@ -14,7 +14,18 @@ import "antd/dist/antd.css";
 import axios from "axios";
 import moment from "moment";
 import { connect } from "react-redux";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const Dragger = Upload.Dragger;
 
 const ButtonGroup = Button.Group;
@@ -24,12 +35,12 @@ class Actions_loader extends Component {
     super(props);
     this.columns = [
       {
-        title: "Назание файла",
+        title: localName("Назание файла"),
         dataIndex: "name",
         key: "name"
       },
       {
-        title: "Дата загрузки",
+        title: localName("Дата загрузки"),
         dataIndex: "created",
         key: "created",
         render: text => (
@@ -37,18 +48,18 @@ class Actions_loader extends Component {
         )
       },
       {
-        title: "Кем загружен",
+        title: localName("Кем загружен"),
         dataIndex: "created_by",
         key: "created_by"
       },
       {
-        title: "Размер файла(в байтах)",
+        title: localName("Размер файла(в байтах)"),
         dataIndex: "size",
         key: "size"
       },
 
       {
-        title: "Статус",
+        title: localName("Статус"),
         dataIndex: "status",
         key: "status",
         render: (text, record) => (
@@ -58,16 +69,16 @@ class Actions_loader extends Component {
               key={record.id}
             >
               {record.status == "done"
-                ? "Загружен"
+                ? localName("Загружен")
                 : record.status == "uploading"
-                ? "Загрузка.."
+                ? localName("Загрузка..")
                 : ""}
             </Tag>
           </span>
         )
       },
       {
-        title: "Действия",
+        title: localName("Действия"),
         dataIndex: "operation",
         render: (text, record) =>
           record.name != "" ? (
@@ -82,10 +93,10 @@ class Actions_loader extends Component {
 
                 <Popconfirm
                   placement="topLeft"
-                  title="Удалить файл?"
+                  title={localName("Удалить файл?")}
                   onConfirm={() => this.handleDelete(record)}
-                  okText="Да"
-                  cancelText="Нет"
+                  okText={localName("Да")}
+                  cancelText={localName("Нет")}
                 >
                   <Button
                     disabled={this.props.attach === "read_m" ? true : false}
@@ -309,13 +320,15 @@ class Actions_loader extends Component {
                 <Icon type="inbox" />
               </p>
               <p className="ant-upload-text">
-                Нажмите или перетащите файл в эту область, чтобы загрузить
+                {localName(
+                  "Нажмите или перетащите файл в эту область, чтобы загрузить"
+                )}
               </p>
               <p className="ant-upload-hint">
-                Поддержка разовой или массовой загрузки
+                {localName("Поддержка разовой или массовой загрузки")}
               </p>
               <p className="ant-upload-hint">
-                Размер файла не должен превышать 3МБ
+                {localName("Размер файла не должен превышать 3МБ")}
               </p>
             </Dragger>
           </Col>

@@ -2,7 +2,18 @@ import { Drawer, Form, Button, Col, Row, Input, message, Icon } from "antd";
 import React from "react";
 import axios from "axios";
 import PhoneInput from "react-phone-number-input/basic-input";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const ButtonGroup = Button.Group;
 
 class NewContact extends React.Component {
@@ -70,14 +81,14 @@ class NewContact extends React.Component {
       <div>
         <ButtonGroup>
           <Button type="primary" onClick={this.showDrawer}>
-            <Icon type="plus-circle" /> Новый контакт
+            <Icon type="plus-circle" /> {localName("Новый контакт")}
           </Button>
           <Button onClick={() => this.props.refreshClientComponent()}>
             <Icon type="reload" />
           </Button>
         </ButtonGroup>
         <Drawer
-          title="Создание нового контакта"
+          title={localName("Создание нового контакта")}
           width={700}
           height={200}
           onClose={this.onClose}
@@ -85,30 +96,30 @@ class NewContact extends React.Component {
         >
           <Form layout="vertical" hideRequiredMark>
             <Row gutter={16}>
-              <Col span={6}>
-                <Form.Item label="Фамилия">
+              <Col span={8}>
+                <Form.Item label={localName("Фамилия")}>
                   <Input
-                    placeholder="Введите Фамилию"
+                    placeholder={localName("Введите Фамилию")}
                     ref={Input => {
                       this.last_name = Input;
                     }}
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
-                <Form.Item label="Имя">
+              <Col span={8}>
+                <Form.Item label={localName("Имя")}>
                   <Input
-                    placeholder="Введите Имя"
+                    placeholder={localName("Введите Имя")}
                     ref={Input => {
                       this.first_name = Input;
                     }}
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
-                <Form.Item label="Отчество">
+              <Col span={8}>
+                <Form.Item label={localName("Отчество")}>
                   <Input
-                    placeholder="Введите Отчество"
+                    placeholder={localName("Введите Отчество")}
                     ref={Input => {
                       this.middle_name = Input;
                     }}
@@ -117,32 +128,32 @@ class NewContact extends React.Component {
               </Col>
             </Row>
             <Row gutter={16}>
-              <Col span={6}>
-                <Form.Item label="Рабочий телефон">
+              <Col span={8}>
+                <Form.Item label={localName("Рабочий телефон")}>
                   <PhoneInput
                     country="KZ"
-                    placeholder="Введите рабочий телефон"
+                    placeholder={localName("Введите рабочий телефон")}
                     value={this.state.work_phone}
                     onChange={val => this.setState({ work_phone: val })}
                     class="ant-input"
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
-                <Form.Item label="Мобильный телефон">
+              <Col span={8}>
+                <Form.Item label={localName("Мобильный телефон")}>
                   <PhoneInput
                     country="KZ"
-                    placeholder="Введите мобильный телефон"
+                    placeholder={localName("Введите мобильный телефон")}
                     value={this.state.mobile_phone}
                     onChange={val => this.setState({ mobile_phone: val })}
                     class="ant-input"
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <Form.Item label="Email">
                   <Input
-                    placeholder="Введите Email"
+                    placeholder={localName("Введите Email")}
                     ref={Input => {
                       this.email = Input;
                     }}
@@ -152,9 +163,9 @@ class NewContact extends React.Component {
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Должность">
+                <Form.Item label={localName("Должность")}>
                   <Input
-                    placeholder="Введите Должность"
+                    placeholder={localName("Введите Должность")}
                     ref={Input => {
                       this.position = Input;
                     }}
@@ -176,10 +187,10 @@ class NewContact extends React.Component {
             }}
           >
             <Button onClick={this.onClose} style={{ marginRight: 8 }}>
-              Отменить
+              {localName("Отменить")}
             </Button>
             <Button onClick={this.onCreate} type="primary">
-              Создать
+              {localName("Создать")}
             </Button>
           </div>
         </Drawer>

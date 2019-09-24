@@ -18,7 +18,18 @@ import "antd/dist/antd.css";
 import moment from "moment";
 import PhoneInput from "react-phone-number-input/basic-input";
 import { connect } from "react-redux";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const ButtonGroup = Button.Group;
 class Contacts extends Component {
   constructor(props) {
@@ -55,22 +66,22 @@ class Contacts extends Component {
         sortOrder: true
       },
       {
-        title: "Фамилия",
+        title: localName("Фамилия"),
         dataIndex: "last_name",
         key: "last_name"
       },
       {
-        title: "Имя",
+        title: localName("Имя"),
         dataIndex: "first_name",
         key: "first_name"
       },
       {
-        title: "Отчество",
+        title: localName("Отчество"),
         dataIndex: "middle_name",
         key: "middle_name"
       },
       {
-        title: "Дата создания",
+        title: localName("Дата создания"),
         dataIndex: "created",
         key: "created",
         render: text => (
@@ -78,7 +89,7 @@ class Contacts extends Component {
         )
       },
       {
-        title: "Дата обновления",
+        title: localName("Дата обновления"),
         dataIndex: "updated",
         key: "updated",
         render: text => (
@@ -88,12 +99,12 @@ class Contacts extends Component {
         )
       },
       {
-        title: "Кто создал",
+        title: localName("Кем создан"),
         dataIndex: "created_by",
         key: "created_by"
       },
       {
-        title: "Кем обновлен",
+        title: localName("Кем обновлен"),
         dataIndex: "updated_by",
         key: "updated_by"
       },
@@ -103,38 +114,38 @@ class Contacts extends Component {
         key: "email"
       },
       {
-        title: "Раб. телефон",
+        title: localName("Рабочий телефон"),
         dataIndex: "work_phone",
         key: "work_phone",
         render: (text, record) => (
           <PhoneInput
             country="KZ"
-            placeholder="Телефон не указан"
+            placeholder={localName("Телефон не указан")}
             value={record.work_phone}
             disabled={true}
           />
         )
       },
       {
-        title: "Моб. телефон",
+        title: localName("Мобильный телефон"),
         dataIndex: "mobile_phone",
         key: "mobile_phone",
         render: (text, record) => (
           <PhoneInput
             country="KZ"
-            placeholder="Телефон не указан"
+            placeholder={localName("Телефон не указан")}
             value={record.mobile_phone}
             disabled={true}
           />
         )
       },
       {
-        title: "Должность",
+        title: localName("Должность"),
         dataIndex: "position",
         key: "position"
       },
       {
-        title: "Действия",
+        title: localName("Действия"),
         dataIndex: "operation",
         render: (text, record) =>
           this.state.data_res.length >= 1 ? (
@@ -144,22 +155,22 @@ class Contacts extends Component {
                   <Icon type="edit" theme="twoTone" />
                 </Button>
                 <Modal
-                  title="Изменить контакта"
+                  title={localName("Изменить контакт")}
                   visible={this.state.chModal}
                   onOk={() => this.handleUpdate(this.state.update_data[0])}
                   onCancel={this.changeHide}
-                  okText="Изменить"
-                  cancelText="Отменить"
+                  okText={localName("Сохранить")}
+                  cancelText={localName("Отменить")}
                 >
                   <Form layout="vertical" hideRequiredMark>
                     <Row gutter={1}>
                       <Col span={24}>
-                        <Form.Item label="Фамилия">
+                        <Form.Item label={localName("Фамилия")}>
                           {
                             <Input
                               type="text"
                               allowClear={true}
-                              placeholder="Фамилия"
+                              placeholder={localName("Фамилия")}
                               defaultValue={this.state.update_data[0].last_name}
                               value={this.state.update_data[0].last_name}
                               onChange={evt =>
@@ -173,12 +184,12 @@ class Contacts extends Component {
                           }
                         </Form.Item>
 
-                        <Form.Item label="Имя">
+                        <Form.Item label={localName("Имя")}>
                           {
                             <Input
                               type="text"
                               allowClear={true}
-                              placeholder="Имя"
+                              placeholder={localName("Имя")}
                               defaultValue={
                                 this.state.update_data[0].first_name
                               }
@@ -193,12 +204,12 @@ class Contacts extends Component {
                             />
                           }
                         </Form.Item>
-                        <Form.Item label="Отчество">
+                        <Form.Item label={localName("Отчество")}>
                           {
                             <Input
                               type="text"
                               allowClear={true}
-                              placeholder="Отчество"
+                              placeholder={localName("Отчество")}
                               defaultValue={
                                 this.state.update_data[0].middle_name
                               }
@@ -232,12 +243,12 @@ class Contacts extends Component {
                           }
                         </Form.Item>
 
-                        <Form.Item label="Рабочий телефон">
+                        <Form.Item label={localName("Рабочий телефон")}>
                           {
                             <PhoneInput
                               class="ant-input"
                               country="KZ"
-                              placeholder="Рабочий телефон"
+                              placeholder={localName("Рабочий телефон")}
                               allowClear={true}
                               defaultValue={
                                 this.state.update_data[0].work_phone
@@ -253,12 +264,12 @@ class Contacts extends Component {
                             />
                           }
                         </Form.Item>
-                        <Form.Item label="Мобильный телефон">
+                        <Form.Item label={localName("Мобильный телефон")}>
                           {
                             <PhoneInput
                               class="ant-input"
                               country="KZ"
-                              placeholder="Мобильный телефон"
+                              placeholder={localName("Мобильный телефон")}
                               allowClear={true}
                               defaultValue={
                                 this.state.update_data[0].mobile_phone
@@ -274,12 +285,12 @@ class Contacts extends Component {
                             />
                           }
                         </Form.Item>
-                        <Form.Item label="Должность">
+                        <Form.Item label={localName("Должность")}>
                           {
                             <Input
                               type="text"
                               allowClear={true}
-                              placeholder="Должность"
+                              placeholder={localName("Должность")}
                               defaultValue={this.state.update_data[0].position}
                               value={this.state.update_data[0].position}
                               onChange={evt =>
@@ -298,10 +309,10 @@ class Contacts extends Component {
                 </Modal>
                 <Popconfirm
                   placement="topLeft"
-                  title="Удалить контакт?"
+                  title={localName("Удалить контакт?")}
                   onConfirm={() => this.handleDelete(record)}
-                  okText="Да"
-                  cancelText="Нет"
+                  okText={localName("Да")}
+                  cancelText={localName("Нет")}
                 >
                   <Button type="danger" shape="circle">
                     <Icon type="delete" />

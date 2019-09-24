@@ -14,10 +14,21 @@ import React from "react";
 import axios from "axios";
 import { connect } from "react-redux";
 import client_type from "../../components/ClientType";
+import localize from "../../components/Localization/index";
 
 const ButtonGroup = Button.Group;
 const { Option, OptGroup } = Select;
-
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 class NewClient extends React.Component {
   state = {
     visible: false,
@@ -47,7 +58,7 @@ class NewClient extends React.Component {
         const requestBody = {
           name: this.clientName.state.value,
           bin: this.bin.state.value,
-          status: "Активный",
+          status: "Active",
           con_phone: this.state.con_phone,
           type: this.state.type_val
         };
@@ -61,14 +72,14 @@ class NewClient extends React.Component {
             if (res.data.detailed_message !== "") {
               this.props.refreshClientComponent();
               res.data.error_code == 0
-                ? message.success(res.data.detailed_message)
-                : message.error(res.data.detailed_message);
+                ? message.success(localName(res.data.detailed_message))
+                : message.error(localName(res.data.detailed_message));
             }
           })
           .catch(res => {
             this.setState({ loading: false });
             if (res.response.data.error_code === 401) {
-              message.error(res.response.data.message);
+              message.error(localName(res.response.data.message));
             }
           });
         this.setState({
@@ -81,7 +92,7 @@ class NewClient extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const config = {
-      rules: [{ required: true, message: "Заполните поле!" }]
+      rules: [{ required: true, message: localName("Заполните поле!") }]
     };
     return (
       <div>
@@ -91,14 +102,15 @@ class NewClient extends React.Component {
             type="primary"
             onClick={this.showDrawer}
           >
-            <Icon type="plus-circle" /> Создать клиента
+            <Icon type="plus-circle" />
+            {localName("Создать клиента")}
           </Button>
           <Button onClick={() => this.props.refreshClientComponent()}>
             <Icon type="reload" />
           </Button>
         </ButtonGroup>
         <Drawer
-          title="Создание нового клиента"
+          title={localName("Создание нового клиента")}
           width={720}
           onClose={this.onClose}
           visible={this.state.visible}
@@ -106,10 +118,10 @@ class NewClient extends React.Component {
           <Form>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Название клиента">
+                <Form.Item label={localName("Наименование клиента")}>
                   {getFieldDecorator("clientName", config)(
                     <Input
-                      placeholder="Введите название клиента"
+                      placeholder={localName("Введите Наименование клиента")}
                       ref={Input => {
                         this.clientName = Input;
                       }}
@@ -118,10 +130,10 @@ class NewClient extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="БИН">
+                <Form.Item label={localName("БИН")}>
                   {getFieldDecorator("bin", config)(
                     <Input
-                      placeholder="Введите БИН"
+                      placeholder={localName("Введите БИН")}
                       ref={Input => {
                         this.bin = Input;
                       }}
@@ -132,7 +144,7 @@ class NewClient extends React.Component {
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Тип клиента">
+                <Form.Item label={localName("Тип клиента")}>
                   {getFieldDecorator("clienttype", config)(
                     <Select onChange={val => this.setState({ type_val: val })}>
                       {client_type.map(digest => (
@@ -145,10 +157,10 @@ class NewClient extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Контактный телефон">
+                <Form.Item label={localName("Контактный телефон")}>
                   <PhoneInput
                     country="KZ"
-                    placeholder="Введите контактный телефон"
+                    placeholder={localName("Введите контактный телефон")}
                     value={this.state.con_phone}
                     onChange={val => this.setState({ con_phone: val })}
                     className="ant-input"
@@ -170,10 +182,10 @@ class NewClient extends React.Component {
             }}
           >
             <Button onClick={this.onClose} style={{ marginRight: 8 }}>
-              Отменить
+              {localName("Отменить")}
             </Button>
             <Button onClick={() => this.onCreate()} type="primary">
-              Создать
+              {localName("Создать")}
             </Button>
           </div>
         </Drawer>

@@ -16,8 +16,8 @@ import view_comp from "../../components/Access/ViewComp";
 import { connect } from "react-redux";
 import GoogleSvg from "../../components/svg/GoogleSVG";
 const Option = Select;
-const b_url = "http://ss6.dyndns.org:8889/";
-//const b_url = "http://192.168.11.204:8889/"; //local
+//const b_url = "http://bapp.kz:8889/";
+const b_url = "http://192.168.11.204:8889/"; //local
 sessionStorage.setItem("b_url", b_url);
 const compName = (state, lic) => {
   let result = lic;

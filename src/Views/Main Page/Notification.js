@@ -3,7 +3,18 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Tag, message } from "antd";
 import NoticeIcon from "ant-design-pro/lib/NoticeIcon";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 class Notification extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +55,7 @@ class Notification extends Component {
               description: (
                 <span>
                   <h3>
-                    Задача:{" "}
+                    {localName("Задача")}:{" "}
                     <Link to={"/TodoDetail/" + list.action_id}>
                       {list.description}
                     </Link>
@@ -54,7 +65,8 @@ class Notification extends Component {
               extra: (
                 <span>
                   <h2>
-                    От: <Tag color="#08979c">{list.notice_from}</Tag>
+                    {localName("От")}:{" "}
+                    <Tag color="#08979c">{list.notice_from}</Tag>
                   </h2>
                 </span>
               ),
@@ -82,8 +94,8 @@ class Notification extends Component {
       >
         <NoticeIcon.Tab
           list={this.state.mod_notice_list}
-          title="Уведомления"
-          emptyText="Нет уведомлений"
+          title={localName("Уведомления")}
+          emptyText={localName("Нет уведомлений")}
           emptyImage="https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg"
         />
       </NoticeIcon>

@@ -11,7 +11,18 @@ import {
 import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const TextArea = Input.TextArea;
 
 const CommentList = ({ comments }) => (
@@ -44,7 +55,7 @@ const Editor = ({ disabled, onChange, onSubmit, submitting, value }) => (
         onClick={onSubmit}
         type="primary"
       >
-        Добавить комментарий
+        {localName("Добавить комментарий")}
       </Button>
     </Form.Item>
   </div>

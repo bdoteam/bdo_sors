@@ -5,7 +5,18 @@ import Todo from "../Todo";
 import ClientContact from "../Contact";
 import ClientUsers from "./ClientUsers";
 import { connect } from "react-redux";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const TabPane = Tabs.TabPane;
 
 class ClientSlidingTabs extends Component {
@@ -27,19 +38,19 @@ class ClientSlidingTabs extends Component {
       <div>
         <Tabs tabPosition={mode} style={{ height: 700 }}>
           {this.props.attach === "ban_m" ? null : (
-            <TabPane tab="Документы" key="1">
+            <TabPane tab={localName("Документы")} key="1">
               <File_Loader ParentId={this.props.ParentId} />
             </TabPane>
           )}
           {this.props.action === "ban_m" ? null : (
-            <TabPane tab="Задачи" key="2">
+            <TabPane tab={localName("Задачи")} key="2">
               <Todo ParentId={this.props.ParentId} />
             </TabPane>
           )}
-          <TabPane tab="Контакты" key="3">
+          <TabPane tab={localName("Контакты")} key="3">
             <ClientContact ParentId={this.props.ParentId} />
           </TabPane>
-          <TabPane tab="Связанные пользователи" key="4">
+          <TabPane tab={localName("Связанные пользователи")} key="4">
             <ClientUsers ParentId={this.props.ParentId} />
           </TabPane>
         </Tabs>

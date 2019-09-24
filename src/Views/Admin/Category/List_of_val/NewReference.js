@@ -13,7 +13,7 @@ import React from "react";
 import axios from "axios";
 import { SwatchesPicker } from "react-color";
 import "rc-color-picker/assets/index.css";
-
+import localizeLang from "../../../../components/Localization/lang";
 const Option = Select.Option;
 const ButtonGroup = Button.Group;
 
@@ -23,6 +23,7 @@ class NewReference extends React.Component {
     visible: false,
     parent_val: [],
     parent_id: "",
+    lang: "",
     color: null
   };
   colorPick = color => {
@@ -67,6 +68,7 @@ class NewReference extends React.Component {
       parent_id: this.state.parent_id,
       code: this.code.state.value,
       color: this.state.color,
+      lang: this.state.lang,
       active: true
     };
     axios({
@@ -165,7 +167,25 @@ class NewReference extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item label="Язык">
+                  <Select
+                    allowClear={true}
+                    defaultValue=""
+                    onChange={val => this.setState({ lang: val })}
+                  >
+                    {localizeLang.map(gr =>
+                      gr.lang === sessionStorage.getItem("lang") ? (
+                        <Option key={gr.val} value={gr.val}>
+                          {gr.name}
+                        </Option>
+                      ) : null
+                    )}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="Цвет">

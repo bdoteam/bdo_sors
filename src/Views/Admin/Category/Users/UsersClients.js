@@ -76,10 +76,10 @@ class UserClientView extends Component {
         render: (text, record) => (
           <span>
             <Tag
-              color={record.status == "Активный" ? "green" : "volcano"}
+              color={record.status == "Active" ? "green" : "volcano"}
               key={record.id}
             >
-              {record.status}
+              {record.status_val}
             </Tag>
           </span>
         )

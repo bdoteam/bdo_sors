@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import InputLabel from "@material-ui/core/InputLabel";
-
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 // @material-ui/icons
 import PermIdentity from "@material-ui/icons/PermIdentity";
 import PassIcon from "@material-ui/icons/VpnKey";
@@ -21,8 +22,34 @@ import CardAvatar from "../../components/material-dashboard-pro-react/Card/CardA
 
 import { message } from "antd";
 import axios from "axios";
+import localizeLang from "../../components/Localization/lang";
+import localize from "../../components/Localization/index";
 
 import userProfileStyles from "../../components/material-dashboard-pro-react/Style/userProfileStyles.jsx";
+const Option = Select.Option;
+//функция для выбора языка
+const localLang = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localizeLang.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
+
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 class UserProfile extends React.Component {
   state = {
     loading: false,
@@ -39,6 +66,35 @@ class UserProfile extends React.Component {
     ],
     newpassword: "",
     renewpassword: ""
+  };
+  handleChange = event => {
+    let headersConfig = {
+      Authorization: "Bearer " + sessionStorage.getItem("credentials")
+    };
+    const requestBody = {
+      id: this.state.data_detail[0].id,
+      lang: event.target.value
+    };
+    axios({
+      method: "post",
+      url: sessionStorage.getItem("b_url") + "users",
+      data: requestBody,
+      headers: headersConfig
+    })
+      .then(res => {
+        this.refresh();
+        if (res.data.detailed_message !== "") {
+          sessionStorage.setItem("lang", event.target.value);
+          res.data.error_code == 0
+            ? message.success(res.data.detailed_message)
+            : message.error(res.data.detailed_message);
+        }
+      })
+      .catch(res => {
+        if (res.response.data.error_code === 401) {
+          message.error(res.response.data.message);
+        }
+      });
   };
   onPassChange = (event, type) => {
     type === "new"
@@ -61,7 +117,7 @@ class UserProfile extends React.Component {
         headers: headersConfig
       })
         .then(res => {
-          this.componentDidMount();
+          this.refresh();
           this.setState({ loading: false, chModal: false });
           if (res.data.detailed_message !== "") {
             res.data.error_code == 0
@@ -76,7 +132,7 @@ class UserProfile extends React.Component {
           }
         });
     } else {
-      message.error("Пароли не совпадают, введите заново!");
+      message.error(localName("Пароли не совпадают, введите заново!"));
     }
   };
 
@@ -101,7 +157,7 @@ class UserProfile extends React.Component {
       });
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.refresh();
   }
   render() {
@@ -116,12 +172,14 @@ class UserProfile extends React.Component {
                   <PassIcon />
                 </CardIcon>
 
-                <h4 className={classes.cardIconTitle}>Изменить пароль</h4>
+                <h4 className={classes.cardIconTitle}>
+                  {localName("Изменить пароль")}
+                </h4>
               </CardHeader>
               <CardBody>
                 <GridItem xs={12} sm={12} md={5}>
                   <CustomInput
-                    labelText="Новый пароль"
+                    labelText={localName("Новый пароль")}
                     id="newpassword"
                     formControlProps={{
                       fullWidth: true
@@ -135,7 +193,7 @@ class UserProfile extends React.Component {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={5}>
                   <CustomInput
-                    labelText="Повторить Новый пароль"
+                    labelText={localName("Повторить Новый пароль")}
                     id="renewpassword"
                     formControlProps={{
                       fullWidth: true
@@ -153,7 +211,7 @@ class UserProfile extends React.Component {
                   className={classes.updateProfileButton}
                   onClick={this.onSave}
                 >
-                  Сохранить
+                  {localName("Сохранить")}
                 </Button>
               </CardBody>
             </Card>
@@ -170,7 +228,7 @@ class UserProfile extends React.Component {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
-                      labelText="Пользователь"
+                      labelText={localName("Пользователь")}
                       id="username-disabled"
                       formControlProps={{
                         fullWidth: true
@@ -200,7 +258,7 @@ class UserProfile extends React.Component {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
-                      labelText="Имя"
+                      labelText={localName("Имя")}
                       id="first-name"
                       formControlProps={{
                         fullWidth: true
@@ -214,7 +272,7 @@ class UserProfile extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
-                      labelText="Фамилия"
+                      labelText={localName("Фамилия")}
                       id="last-name"
                       formControlProps={{
                         fullWidth: true
@@ -230,7 +288,7 @@ class UserProfile extends React.Component {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
-                      labelText="Должность"
+                      labelText={localName("Должность")}
                       id="position"
                       formControlProps={{
                         fullWidth: true
@@ -244,7 +302,7 @@ class UserProfile extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
-                      labelText="Группа"
+                      labelText={localName("Группа")}
                       id="group"
                       formControlProps={{
                         fullWidth: true
@@ -257,6 +315,26 @@ class UserProfile extends React.Component {
                     />
                   </GridItem>
                 </GridContainer>
+                <GridItem xs={12} sm={12} md={3}>
+                  <InputLabel
+                    style={{
+                      class:
+                        "MuiFormLabel-root MuiInputLabel-root CustomInput-labelRoot-175  MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+                    }}
+                  >
+                    {localName("Язык")}
+                  </InputLabel>
+                  <Select
+                    value={this.state.data_detail[0].lang}
+                    onChange={this.handleChange}
+                  >
+                    {localizeLang.map(digest =>
+                      digest.lang === sessionStorage.getItem("lang") ? (
+                        <MenuItem value={digest.val}>{digest.name}</MenuItem>
+                      ) : null
+                    )}
+                  </Select>
+                </GridItem>
 
                 <Clearfix />
               </CardBody>

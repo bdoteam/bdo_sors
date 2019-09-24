@@ -2,15 +2,21 @@ import React from "react";
 import { Avatar } from "antd";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
-import SendIcon from "@material-ui/icons/Send";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5"
@@ -77,12 +83,12 @@ export default function CustomizedMenus() {
       >
         <StyledMenuItem>
           <Link to="/UserProfile" style={{ color: "#757575" }}>
-            <ListItemText primary="Профиль" />
+            <ListItemText primary={localName("Профиль")} />
           </Link>
         </StyledMenuItem>
         <StyledMenuItem>
           <Link to="/Login" style={{ color: "#757575" }}>
-            <ListItemText primary="Выход" />
+            <ListItemText primary={localName("Выход")} />
           </Link>
         </StyledMenuItem>
       </StyledMenu>

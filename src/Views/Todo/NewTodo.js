@@ -13,6 +13,19 @@ import {
 import React from "react";
 import axios from "axios";
 import { connect } from "react-redux";
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
+
 const ButtonGroup = Button.Group;
 
 const Option = Select;
@@ -79,20 +92,20 @@ class NewTodo extends React.Component {
                 err_message = res.data.detailed_message;
                 err_code = res.data.error_code;
                 err_code == 0
-                  ? message.success(err_message)
-                  : message.error(err_message);
+                  ? message.success(localName(err_message))
+                  : message.error(localName(err_message));
               }
             })
             .catch(res => {
               if (res.response.data.error_code === 401) {
-                message.error(res.response.data.message);
+                message.error(localName(res.response.data.message));
               }
             })
         );
       })
       .catch(res => {
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   }
@@ -100,7 +113,7 @@ class NewTodo extends React.Component {
   componentDidMount() {
     this.setState({ loading: true });
     axios
-      .get(sessionStorage.getItem("b_url") + "customer?status=Активный", {
+      .get(sessionStorage.getItem("b_url") + "customer?status=Active", {
         headers: {
           Authorization: "Bearer " + sessionStorage.getItem("credentials")
         }
@@ -112,7 +125,7 @@ class NewTodo extends React.Component {
       .catch(res => {
         this.setState({ loading: false });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
     //Загрузка справочников
@@ -145,14 +158,11 @@ class NewTodo extends React.Component {
       })
       .catch(res => {});
     axios
-      .get(
-        sessionStorage.getItem("b_url") + "parent_actions?status=Завершено",
-        {
-          headers: {
-            Authorization: "Bearer " + sessionStorage.getItem("credentials")
-          }
+      .get(sessionStorage.getItem("b_url") + "parent_actions?status=Done", {
+        headers: {
+          Authorization: "Bearer " + sessionStorage.getItem("credentials")
         }
-      )
+      })
       .then(res => {
         this.setState({ parent_val: res.data });
         this.setState({ loading: false });
@@ -160,7 +170,7 @@ class NewTodo extends React.Component {
       .catch(res => {
         this.setState({ loading: false });
         if (res.response.data.error_code === 401) {
-          message.error(res.response.data.message);
+          message.error(localName(res.response.data.message));
         }
       });
   }
@@ -195,7 +205,7 @@ class NewTodo extends React.Component {
         const requestBody = {
           shortname: this.shortname.state.value,
           type: this.state.type_val,
-          status: "Новый",
+          status: "New",
           priority: this.priority.state.value,
           description: this.state.desc,
           subtype: subtype,
@@ -213,8 +223,8 @@ class NewTodo extends React.Component {
             if (res.data.detailed_message !== "") {
               this.props.refreshClientComponent();
               res.data.error_code == 0
-                ? message.success(res.data.detailed_message)
-                : message.error(res.data.detailed_message);
+                ? message.success(localName(res.data.detailed_message))
+                : message.error(localName(res.data.detailed_message));
               if (
                 res.data.action_id != null &&
                 (this.props.user_group === "Client" ||
@@ -231,7 +241,7 @@ class NewTodo extends React.Component {
           .catch(res => {
             this.setState({ loading: false });
             if (res.response.data.error_code === 401) {
-              message.error(res.response.data.message);
+              message.error(localName(res.response.data.message));
             }
           });
 
@@ -245,7 +255,7 @@ class NewTodo extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const config = {
-      rules: [{ required: true, message: "Заполните поле!" }]
+      rules: [{ required: true, message: localName("Заполните поле!") }]
     };
     return (
       <div>
@@ -255,14 +265,14 @@ class NewTodo extends React.Component {
             type="primary"
             onClick={this.showDrawer}
           >
-            <Icon type="plus-circle" /> Новая задача
+            <Icon type="plus-circle" /> {localName("Новая задача")}
           </Button>
           <Button onClick={() => this.props.refreshClientComponent()}>
             <Icon type="reload" />
           </Button>
         </ButtonGroup>
         <Drawer
-          title="Создание новой задачи"
+          title={localName("Создание новой задачи")}
           width={720}
           onClose={this.onClose}
           visible={this.state.visible}
@@ -270,10 +280,10 @@ class NewTodo extends React.Component {
           <Form>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Наименование задачи">
+                <Form.Item label={localName("Наименование задачи")}>
                   {getFieldDecorator("shortname", config)(
                     <Input
-                      placeholder="Введите наименование задачи"
+                      placeholder={localName("Введите наименование задачи")}
                       ref={Input => {
                         this.shortname = Input;
                       }}
@@ -282,10 +292,10 @@ class NewTodo extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Приоритет">
+                <Form.Item label={localName("Приоритет")}>
                   {getFieldDecorator("priority", config)(
                     <Input
-                      placeholder="Введите Приоритет"
+                      placeholder={localName("Введите Приоритет")}
                       ref={Input => {
                         this.priority = Input;
                       }}
@@ -296,7 +306,7 @@ class NewTodo extends React.Component {
             </Row>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Тип задачи">
+                <Form.Item label={localName("Тип задачи")}>
                   {getFieldDecorator("todotype", config)(
                     <Select onChange={val => this.setState({ type_val: val })}>
                       {this.state.todo_type_list.map(gr => (
@@ -309,7 +319,7 @@ class NewTodo extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Клиент">
+                <Form.Item label={localName("Клиент")}>
                   <Select
                     disabled={this.props.ParentId == undefined ? false : true}
                     defaultValue={
@@ -331,7 +341,7 @@ class NewTodo extends React.Component {
             {this.props.user_group != "Client" ? (
               <Row gutter={16}>
                 <Col span={24}>
-                  <Form.Item label="Подтип задачи">
+                  <Form.Item label={localName("Подтип задачи")}>
                     {getFieldDecorator("subtype", config)(
                       <Select
                         onChange={val => this.setState({ subtype_val: val })}
@@ -351,7 +361,7 @@ class NewTodo extends React.Component {
             ) : null}
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item label="Исходная задача">
+                <Form.Item label={localName("Исходная задача")}>
                   <Select
                     allowClear={true}
                     defaultValue=""
@@ -376,10 +386,10 @@ class NewTodo extends React.Component {
             </Row>
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item label="Описание">
+                <Form.Item label={localName("Описание")}>
                   <Input.TextArea
                     rows={4}
-                    placeholder="Введите описание"
+                    placeholder={localName("Введите описание")}
                     onChange={e => this.setState({ desc: e.target.value })}
                   />
                 </Form.Item>
@@ -394,7 +404,7 @@ class NewTodo extends React.Component {
                       this.setState({ client_visible: e.target.checked })
                     }
                   >
-                    Не показывать клиенту
+                    {localName("Не показывать клиенту")}
                   </Checkbox>
                 </Col>
               </Row>
@@ -412,10 +422,10 @@ class NewTodo extends React.Component {
               }}
             >
               <Button onClick={this.onClose} style={{ marginRight: 8 }}>
-                Отменить
+                {localName("Отменить")}
               </Button>
               <Button onClick={this.onCreate} type="primary" htmlType="submit">
-                Создать
+                {localName("Создать")}
               </Button>
             </div>
           </Form>

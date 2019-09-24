@@ -16,7 +16,18 @@ import axios from "axios";
 import TodoCategory from "./TodoCategory";
 import moment from "moment";
 import { connect } from "react-redux";
-
+import localize from "../../components/Localization/index";
+//функция для локализаций
+const localName = name => {
+  let result = name;
+  let lang = sessionStorage.getItem("lang");
+  {
+    localize.map(comp =>
+      name === comp.name && lang === comp.lang ? (result = comp.val) : comp.name
+    );
+  }
+  return result;
+};
 const Option = Select.Option;
 const ButtonGroup = Button.Group;
 
@@ -105,7 +116,7 @@ class TodoDetailForm extends React.Component {
     };
     const requestBody = {
       id: this.props.id,
-      status: "Завершено"
+      status: "Done"
     };
     axios({
       method: "post",
@@ -148,23 +159,23 @@ class TodoDetailForm extends React.Component {
     let btStatus =
       this.props.action === "read_m" || this.props.user_group !== "Manager"
         ? true
-        : this.state.data_detail[0].status === "В работе"
+        : this.state.data_detail[0].status === "In process"
         ? false
         : true;
     let btcomplete = (
       <Button disabled={btStatus} type="primary">
         <Icon type="close-circle" />
-        Завершить
+        {localName("Завершить")}
       </Button>
     );
 
     return btStatus === false ? (
       <Popconfirm
         placement="topLeft"
-        title="Подтверждаете завершение задачи?"
+        title={localName("Подтверждаете завершение задачи?")}
         onConfirm={() => this.onClose()}
-        okText="Да"
-        cancelText="Нет"
+        okText={localName("Да")}
+        cancelText={localName("Нет")}
       >
         {btcomplete}
       </Popconfirm>
@@ -181,7 +192,7 @@ class TodoDetailForm extends React.Component {
     };
     const requestBody = {
       id: this.props.id,
-      status: "В работе",
+      status: "In process",
       resp: "Y"
     };
     axios({
@@ -249,7 +260,7 @@ class TodoDetailForm extends React.Component {
           <Link to="/Todo">
             <Button type="primary">
               <Icon type="left-circle" theme="twoTone" />
-              Назад
+              {localName("Назад")}
             </Button>
           </Link>
           <Button
@@ -258,14 +269,14 @@ class TodoDetailForm extends React.Component {
               this.props.action === "read_m" ||
               this.props.user_group !== "Manager"
                 ? true
-                : this.state.data_detail[0].status === "Новый"
+                : this.state.data_detail[0].status === "New"
                 ? false
                 : true
             }
             type="primary"
           >
             <Icon type="issues-close" />
-            Принять в работу
+            {localName("Принять в работу")}
           </Button>
           {this.confirmComplete()}
           <Button onClick={() => this.refresh()}>
@@ -275,19 +286,19 @@ class TodoDetailForm extends React.Component {
         <ButtonGroup>
           <p style={{ marginLeft: 20 }}>
             <h4>
-              Статус:
+              {localName("Статус")}:
               <Tag
                 style={{ marginLeft: 5 }}
                 color={
-                  this.state.data_detail[0].status === "Новый"
+                  this.state.data_detail[0].status === "New"
                     ? "#595959"
-                    : this.state.data_detail[0].status === "Завершено"
+                    : this.state.data_detail[0].status === "Done"
                     ? "#52c41a"
                     : "#faad14"
                 }
                 key={this.state.data_detail[0].id}
               >
-                {this.state.data_detail[0].status}
+                {this.state.data_detail[0].status_val}
               </Tag>
             </h4>
           </p>
@@ -298,11 +309,11 @@ class TodoDetailForm extends React.Component {
         <Form layout="vertical" hideRequiredMark>
           <Row gutter={16}>
             <Col span={3}>
-              <Form.Item label="ID задачи">
+              <Form.Item label={localName("ID задачи")}>
                 {
                   <Input
                     type="text"
-                    placeholder="ID задачи"
+                    placeholder={localName("ID задачи")}
                     defaultValue={this.state.data_detail[0].id}
                     value={this.state.data_detail[0].id}
                     style={{ backgroundColor: "#1890ff33" }}
@@ -311,11 +322,11 @@ class TodoDetailForm extends React.Component {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="Наименование задачи">
+              <Form.Item label={localName("Наименование задачи")}>
                 {
                   <Input
                     type="text"
-                    placeholder="Наименование задачи"
+                    placeholder={localName("Наименование задачи")}
                     defaultValue={this.state.data_detail[0].shortname}
                     value={this.state.data_detail[0].shortname}
                   />
@@ -323,10 +334,10 @@ class TodoDetailForm extends React.Component {
               </Form.Item>
             </Col>
             <Col span={3}>
-              <Form.Item label="Приоритет">
+              <Form.Item label={localName("Приоритет")}>
                 {
                   <Input
-                    placeholder="Приоритет"
+                    placeholder={localName("Приоритет")}
                     defaultValue={this.state.data_detail[0].priority}
                     value={this.state.data_detail[0].priority}
                   />
@@ -336,11 +347,11 @@ class TodoDetailForm extends React.Component {
           </Row>
           <Row gutter={16}>
             <Col span={3}>
-              <Form.Item label="Тип задачи">
+              <Form.Item label={localName("Тип задачи")}>
                 {
                   <Input
                     readOnly
-                    placeholder="Тип задачи"
+                    placeholder={localName("Тип задачи")}
                     defaultValue={this.state.data_detail[0].type_val}
                     value={this.state.data_detail[0].type_val}
                   />
@@ -348,20 +359,20 @@ class TodoDetailForm extends React.Component {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="Подтип задачи">
+              <Form.Item label={localName("Подтип задачи")}>
                 <Input
                   readOnly
-                  placeholder="Подтип задачи"
+                  placeholder={localName("Подтип задачи")}
                   defaultValue={this.state.data_detail[0].subtype_val}
                   value={this.state.data_detail[0].subtype_val}
                 />
               </Form.Item>
             </Col>
             <Col span={3}>
-              <Form.Item label="Дата создания">
+              <Form.Item label={localName("Дата создания")}>
                 {
                   <Input
-                    placeholder="Дата создания"
+                    placeholder={localName("Дата создания")}
                     defaultValue={moment(
                       this.state.data_detail[0].created
                     ).format("DD.MM.YYYY HH:mm:ss")}
@@ -375,10 +386,10 @@ class TodoDetailForm extends React.Component {
           </Row>
           <Row gutter={16}>
             <Col span={3}>
-              <Form.Item label="Исходная задача">
+              <Form.Item label={localName("Исходная задача")}>
                 <Input
                   readOnly
-                  placeholder="Исходная задача"
+                  placeholder={localName("Исходная задача")}
                   defaultValue={this.state.data_detail[0].parent_id}
                   value={this.state.data_detail[0].parent_id}
                 />
@@ -388,11 +399,11 @@ class TodoDetailForm extends React.Component {
               </Form.Item>
             </Col>
             <Col span={9}>
-              <Form.Item label="Описание">
+              <Form.Item label={localName("Описание")}>
                 {
                   <Input.TextArea
                     rows={2}
-                    placeholder="Введите описание"
+                    placeholder={localName("Введите описание")}
                     defaultValue={this.state.data_detail[0].description}
                     value={this.state.data_detail[0].description}
                   />
