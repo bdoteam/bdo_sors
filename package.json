@@ -15,7 +15,7 @@
     "lz-string": "^1.4.4",
     "material-table": "^1.50.0",
     "moment": "^2.24.0",
-    "nconf": "^0.10.0",
+    "nconf": "^0.11.4",
     "rc-color-picker": "^1.2.6",
     "react": "^16.8.4",
     "react-color": "^2.17.3",
